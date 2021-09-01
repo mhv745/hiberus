@@ -6,6 +6,7 @@ Prueba técnica para Hiberus
 
 ### Ejecutar en navegador
 
+Duplicar el archivo ".env" y nombrarlo ".env.local"
 Correr el comando 'npm install' y luego 'npm start'
 
 ### Test e2e cypress
@@ -14,6 +15,7 @@ Correr en el navegador y luego ejecutar 'npm run cypress'
 
 ### Compilar para producción
 
+Duplicar el archivo ".env" y nombrarlo ".env.test"
 Correr el comando 'npm run build'
 
 ## Desarrollador
