@@ -22,7 +22,7 @@ export const Core = () => {
   }
 
   if (token && user) {
-    return <Router>
+    return <Router basename={`${process.env.REACT_APP_BASE_URL}`}>
     <Switch>
       <Route exact path="/usuarios" component={Home} />
       <Route exact path="/logout" component={Logout} />
@@ -31,7 +31,7 @@ export const Core = () => {
   </Router>
   }
 
-  return <Router>
+  return <Router basename={`${process.env.REACT_APP_BASE_URL}`}>
     <Switch>
       <Route exact path="/login" component={Auth} />
       <Route path="/register/" component={Auth} />

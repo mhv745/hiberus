@@ -6,19 +6,9 @@ import { css } from '@emotion/css'
 import { useLocation, Link } from 'react-router-dom'
 
 export const Auth = () => {
-  // const [loginPage, setLoginPage] = useState(true)
-
   const { pathname } = useLocation()
-  // useEffect(() => {
-  //   if (pathname === '/register') {
-  //     setLoginPage(false)
-  //   }
-  // }, [pathname])
 
-  console.log(pathname)
   const isLoginPage = !pathname.includes('/register')
-
-  // const toggle = () => setLoginPage(!loginPage)
 
   const enlace = isLoginPage
     ? <Text>No tengo cuenta, <Link to="/register">quiero registrarme</Link></Text>
