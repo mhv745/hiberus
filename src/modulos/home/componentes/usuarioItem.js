@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useUsuarios } from '../../../hooks/useUsuarios'
 import { Text, Stack, IconButton, Modal, PrimaryButton, DefaultButton, TextField } from '@fluentui/react'
 import { css } from '@emotion/css'
@@ -18,15 +18,26 @@ export const UsuarioItem = ({ usuario, onEditar, onEliminar }) => {
 
 export const BtnEditar = ({ usuario, onEditar }) => {
   const [openModal, setOpenModal] = useState(false)
-  const { handleSubmit, control, formState: { isValid, errors } } = useForm()
+  const { handleSubmit, control, reset, formState: { errors, isValid, isDirty, isSubmitting } } = useForm({
+    mode: 'onChange',
+    reValidateMode: 'onChange',
+    defaultValues: {
+      name: usuario.name || '',
+      surname: usuario.surname || '',
+      email: usuario.email || ''
+    }
+  })
   const [error, setError] = useState()
   const { update } = useUsuarios()
 
-  const onSubmit = async (data) => {
-    if (!isValid) {
-      setError(errors.first())
-      return
+  useEffect(() => {
+    if (openModal) {
+      reset()
     }
+  }, [openModal])
+
+  const onSubmit = async (data) => {
+    if (!isValid) return
     try {
       const newUser = await update(usuario.id, data)
       onEditar(usuario.id, newUser)
@@ -43,24 +54,39 @@ export const BtnEditar = ({ usuario, onEditar }) => {
         <Text variant="xLarge">Editar usuario</Text>
         <Text>ID: {usuario.id}</Text>
         <form onSubmit={handleSubmit(onSubmit)}>
-          <Controller name="name" control={control} defaultValue={usuario.name || ''} render={({ field }) =>
+          <Controller
+          name="name"
+          control={control}
+          rules={{ required: 'Campo nombre obligatorio', minLength: { value: 2, message: 'Al menos 2 dígitos' } }}
+          render={({ field }) =>
             <TextField
               {...field} label="Nombre"
-              minLength={1} />
+              errorMessage={errors.name?.message || ''}
+               />
           } />
-          <Controller name="surname" control={control} defaultValue={usuario.surname || ''} render={({ field }) =>
+          <Controller
+          name="surname"
+          control={control}
+          rules={{ required: 'Campo apellido obligatorio', minLength: { value: 2, message: 'Al menos 2 dígitos' } }}
+          render={({ field }) =>
             <TextField
               {...field} label="Apellidos"
-              minLength={1} />
+              errorMessage={errors.surname?.message || ''}
+               />
           } />
-          <Controller name="email" control={control} defaultValue={usuario.email || ''} render={({ field }) =>
+          <Controller
+          name="email"
+          control={control}
+          rules={{ required: 'Campo email obligatorio', minLength: { value: 4, message: 'Al menos 4 dígitos' } }}
+          render={({ field }) =>
             <TextField
               {...field} label="Email"
-              minLength={1} />
+              errorMessage={errors.email?.message || ''}
+               />
           } />
           <Stack horizontal horizontalAlign="end" tokens={{ childrenGap: '1rem', padding: '1rem 0 0' }}>
             <DefaultButton text="cancelar" onClick={() => setOpenModal(false)} />
-          <PrimaryButton type="submit" text="Actualizar" />
+          <PrimaryButton disabled={!isDirty || !isValid || isSubmitting} type="submit" text="Actualizar" />
           </Stack>
           <p>{error}</p>
         </form>

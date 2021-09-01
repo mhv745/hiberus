@@ -5,11 +5,15 @@ import { Text, PrimaryButton, TextField, Stack } from '@fluentui/react'
 import { css } from '@emotion/css'
 
 export const RegistroForm = () => {
-  const { control, handleSubmit } = useForm()
+  const { control, handleSubmit, formState: { errors, isValid, isDirty, isSubmitting } } = useForm({
+    mode: 'onChange',
+    reValidateMode: 'onChange'
+  })
   const { registro } = useAuth()
   const [error, setError] = useState('')
 
   const onSubmit = async (data) => {
+    if (!isValid) return
     setError('')
     try {
       await registro(data)
@@ -29,33 +33,58 @@ export const RegistroForm = () => {
         <Stack.Item align="center">
           <Text variant="large">Registro</Text>
         </Stack.Item>
-        <Controller name="name" control={control} defaultValue="" render={({ field }) =>
+        <Controller
+        name="name"
+        control={control}
+        defaultValue=""
+        rules={{ required: 'Campo nombre obligatorio', minLength: { value: 2, message: 'Al menos 2 dígitos' } }}
+        render={({ field }) =>
               <TextField
             {...field} label="Nombre"
             autoComplete="given-name"
-                minLength={1} />
+            errorMessage={errors.name?.message || ''}
+                 />
             } />
-        <Controller name="surname" control={control} defaultValue="" render={({ field }) =>
+        <Controller
+        name="surname"
+        control={control}
+        defaultValue=""
+        rules={{ required: 'Campo apellido obligatorio', minLength: { value: 2, message: 'Al menos 2 dígitos' } }}
+        render={({ field }) =>
               <TextField
             {...field} label="Apellidos"
               autoComplete="family-name"
-              minLength={1} />
+              errorMessage={errors.surname?.message || ''}
+               />
             } />
-          <Controller name="email" control={control} defaultValue="" render={({ field }) =>
+          <Controller
+          name="email"
+          control={control}
+          defaultValue=""
+          rules={{ required: 'Campo email obligatorio', minLength: { value: 4, message: 'Al menos 4 dígitos' } }}
+          render={({ field }) =>
               <TextField
             {...field} label="Email"
-            autoComplete="new-password"
-                minLength={1} />
+            errorMessage={errors.email?.message || ''}
+            autoComplete="email"
+                 />
             } />
-          <Controller name="password" control={control} defaultValue="" render={({ field }) =>
+          <Controller
+          name="password"
+          control={control}
+          defaultValue=""
+          rules={{ required: 'Campo password obligatorio', minLength: { value: 4, message: 'Al menos 4 dígitos' } }}
+          render={({ field }) =>
               <TextField
             {...field} label="Password"
-            autoComplete="email"
+            autoComplete="new-password"
+            errorMessage={errors.password?.message || ''}
+            canRevealPassword
               type="password"
                 minLength={1} />
             } />
           <Text block className={'error'}>{error}</Text>
-          <PrimaryButton type="submit" text="Registro" />
+          <PrimaryButton disabled={!isDirty || !isValid || isSubmitting} type="submit" text="Registro" />
         </Stack>
 
     </form>

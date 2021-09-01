@@ -5,11 +5,15 @@ import { Text, PrimaryButton, TextField, Stack } from '@fluentui/react'
 import { css } from '@emotion/css'
 
 export const LoginForn = () => {
-  const { control, handleSubmit } = useForm()
+  const { control, handleSubmit, formState: { errors, isValid, isDirty, isSubmitting } } = useForm({
+    mode: 'onChange',
+    reValidateMode: 'onChange'
+  })
   const { login } = useAuth()
   const [error, setError] = useState('')
 
   const onSubmit = async (data) => {
+    if (!isValid) return
     setError('')
     try {
       await login(data)
@@ -29,21 +33,34 @@ export const LoginForn = () => {
         <Stack.Item align="center">
           <Text variant="large">Login</Text>
         </Stack.Item>
-          <Controller name="email" control={control} defaultValue="" rules={{ required: true, minLength: 4 }} render={({ field }) =>
+          <Controller
+          name="email"
+          control={control}
+          defaultValue=""
+          rules={{ required: 'El campo email es obligatorio', minLength: { value: 4, message: 'Al menos 4 dígitos' } }}
+          render={({ field }) =>
               <TextField
             {...field} label="Email"
+            errorMessage={errors.email?.message || ''}
             autoComplete="email"
-                minLength={1} />
+                />
             } />
-          <Controller name="password" control={control} defaultValue="" rules={{ required: true, minLength: 4 }} render={({ field }) =>
+          <Controller
+          name="password"
+          control={control}
+          defaultValue=""
+          rules={{ required: 'Campo password es obligatorio', minLength: { value: 4, message: 'Al menos 4 dígitos' } }}
+          render={({ field }) =>
               <TextField
               {...field} label="Password"
             type="password"
+            errorMessage={errors.password?.message || ''}
+            canRevealPassword
             autoComplete="current-password"
-                minLength={1} />
+                />
             } />
           <Text block className={'error'}>{error}</Text>
-          <PrimaryButton type="submit" text="Iniciar sesión" />
+          <PrimaryButton disabled={!isDirty || !isValid || isSubmitting} type="submit" text="Iniciar sesión" />
         </Stack>
       </form>
   )
