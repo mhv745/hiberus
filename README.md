@@ -2,6 +2,20 @@
 
 Prueba técnica para Hiberus
 
+## Instrucciones
+
+### Ejecutar en navegador
+
+Correr el comando 'npm install' y luego 'npm start'
+
+### Test e2e cypress
+
+Correr en el navegador y luego ejecutar 'npm run cypress'
+
+### Compilar para producción
+
+Correr el comando 'npm run build'
+
 ## Desarrollador
 
 ### Miguel Angel Hernández Von Hartmann :wink:
