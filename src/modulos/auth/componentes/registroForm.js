@@ -1,14 +1,15 @@
 import React, { useState } from 'react'
-import { useForm } from 'react-hook-form'
-import { useAuth } from '../../../context/authContext'
+import { useForm, Controller } from 'react-hook-form'
+import { useAuth } from '../../../hooks/useAuth'
+import { Text, PrimaryButton, TextField, Stack } from '@fluentui/react'
+import { css } from '@emotion/css'
 
 export const RegistroForm = () => {
-  const { register, handleSubmit } = useForm()
+  const { control, handleSubmit } = useForm()
   const { registro } = useAuth()
   const [error, setError] = useState('')
 
   const onSubmit = async (data) => {
-    console.log(data)
     setError('')
     try {
       await registro(data)
@@ -17,24 +18,46 @@ export const RegistroForm = () => {
     }
   }
 
-  return <form onSubmit={handleSubmit(onSubmit)}>
-    <div>
-      <label htmlFor="email">Email</label>
-      <input defaultValue="" {...register('email', { required: true, minLength: 4 })} />
-    </div>
-    <div>
-      <label htmlFor="password">Password</label>
-      <input type="password" {...register('password', { required: true, minLength: 4 })} />
-    </div>
-    <div>
-      <label htmlFor="name">Nombre</label>
-      <input defaultValue="" {...register('name', { required: true })} />
-    </div>
-    <div>
-      <label htmlFor="surname">Apellidos</label>
-      <input defaultValue="" {...register('surname', { required: true })} />
-    </div>
-    <p className="error">{error}</p>
-    <input type="submit" value="Registro" />
+  return (
+    <form onSubmit={handleSubmit(onSubmit)}>
+      <Stack className={css`
+        width: 300px;
+        border: 1px solid #ddd;
+        padding: 2rem;
+        border-radius: 5px;
+        `} tokens={{ childrenGap: '0.5rem' }}>
+        <Stack.Item align="center">
+          <Text variant="large">Registro</Text>
+        </Stack.Item>
+        <Controller name="name" control={control} defaultValue="" render={({ field }) =>
+              <TextField
+            {...field} label="Nombre"
+            autoComplete="given-name"
+                minLength={1} />
+            } />
+        <Controller name="surname" control={control} defaultValue="" render={({ field }) =>
+              <TextField
+            {...field} label="Apellidos"
+              autoComplete="family-name"
+              minLength={1} />
+            } />
+          <Controller name="email" control={control} defaultValue="" render={({ field }) =>
+              <TextField
+            {...field} label="Email"
+            autoComplete="new-password"
+                minLength={1} />
+            } />
+          <Controller name="password" control={control} defaultValue="" render={({ field }) =>
+              <TextField
+            {...field} label="Password"
+            autoComplete="email"
+              type="password"
+                minLength={1} />
+            } />
+          <Text block className={'error'}>{error}</Text>
+          <PrimaryButton type="submit" text="Registro" />
+        </Stack>
+
     </form>
+  )
 }

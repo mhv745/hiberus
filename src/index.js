@@ -1,10 +1,15 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-import './index.css'
 import reportWebVitals from './reportWebVitals'
 import { Core } from './modulos/core/core'
-import { AuthContextProvider } from './context/authContext'
+import { AuthContextProvider } from './hooks/useAuth'
+import { initializeIcons } from '@fluentui/react/lib/Icons'
+import './index.css'
 
+console.log('Programación Miguel Angel Hernández Von Hartmann')
+console.log('contacto@hernandezmiguel.es - https://hernandezmiguel.es ')
+
+initializeIcons()
 ReactDOM.render(
   <React.StrictMode>
     <AuthContextProvider>

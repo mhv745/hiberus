@@ -1,14 +1,15 @@
 import React, { useState } from 'react'
-import { useForm } from 'react-hook-form'
-import { useAuth } from '../../../context/authContext'
+import { useForm, Controller } from 'react-hook-form'
+import { useAuth } from '../../../hooks/useAuth'
+import { Text, PrimaryButton, TextField, Stack } from '@fluentui/react'
+import { css } from '@emotion/css'
 
 export const LoginForn = () => {
-  const { register, handleSubmit } = useForm()
+  const { control, handleSubmit } = useForm()
   const { login } = useAuth()
   const [error, setError] = useState('')
 
   const onSubmit = async (data) => {
-    console.log(data)
     setError('')
     try {
       await login(data)
@@ -17,16 +18,33 @@ export const LoginForn = () => {
     }
   }
 
-  return <form onSubmit={handleSubmit(onSubmit)}>
-    <div>
-    <label htmlFor="email">Email</label>
-      <input defaultValue="" {...register('email', { required: true, minLength: 4 })} />
-      </div>
-    <div>
-    <label htmlFor="password">Password</label>
-    <input type="password" {...register('password', { required: true, minLength: 4 })} />
-    </div>
-    <p className="error">{error}</p>
-    <input type="submit" value="Iniciar sesión" />
-    </form>
+  return (
+      <form onSubmit={handleSubmit(onSubmit)}>
+      <Stack className={css`
+        width: 300px;
+        border: 1px solid #ddd;
+        padding: 2rem;
+        border-radius: 5px;
+        `} tokens={{ childrenGap: '0.5rem' }}>
+        <Stack.Item align="center">
+          <Text variant="large">Login</Text>
+        </Stack.Item>
+          <Controller name="email" control={control} defaultValue="" rules={{ required: true, minLength: 4 }} render={({ field }) =>
+              <TextField
+            {...field} label="Email"
+            autoComplete="email"
+                minLength={1} />
+            } />
+          <Controller name="password" control={control} defaultValue="" rules={{ required: true, minLength: 4 }} render={({ field }) =>
+              <TextField
+              {...field} label="Password"
+            type="password"
+            autoComplete="current-password"
+                minLength={1} />
+            } />
+          <Text block className={'error'}>{error}</Text>
+          <PrimaryButton type="submit" text="Iniciar sesión" />
+        </Stack>
+      </form>
+  )
 }
